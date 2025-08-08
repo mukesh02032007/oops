@@ -30,18 +30,3 @@ public class Primenumberchecker {
 		}
 	}
 }
-Output:
-Enter number:2
-prime
-Output:
-Enter number:15
-Not Prime
-Output:
-Enter number:17
-prime
-Output:
-Enter number:1
-Not Prime
-Output:
-Enter number:0
-Not Prime
