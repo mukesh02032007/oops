@@ -27,6 +27,6 @@ public class Primenumberchecker {
 			{
 				System.out.println("prime");
 			}
-		}
+		}s.close();
 	}
 }
