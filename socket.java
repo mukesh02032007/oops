@@ -1,54 +1,53 @@
-import java.io.*;
-import java.net.*;
-public class Server {
-	public static void main(String[] args) {
-        try {
-            ServerSocket ss = new ServerSocket(5000);
-            System.out.println("Server started, waiting for clients...");
-
-            while (true) { // keep server running
-                Socket s = ss.accept();
-                System.out.println("Client connected.");
-
-                DataInputStream dis = new DataInputStream(s.getInputStream());
-                DataOutputStream dos = new DataOutputStream(s.getOutputStream());
-
-                String clientMsg = dis.readUTF();
-                System.out.println("Client says: " + clientMsg);
-
-                dos.writeUTF("Hello Client, message received!");
-
-                dis.close();
-                dos.close();
-                s.close();
-                System.out.println("Client disconnected.\nWaiting for next client...");
-            }
-
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-	}
-}
+package oops;
 import java.io.*;
 import java.net.*;
 public class Client {
 	public static void main(String[] args) {
-        try {
-            Socket s = new Socket("localhost", 5000);
-
-            DataInputStream dis = new DataInputStream(s.getInputStream());
-            DataOutputStream dos = new DataOutputStream(s.getOutputStream());
-
-            dos.writeUTF("Hello Server!");
-
-            String serverMsg = dis.readUTF();
-            System.out.println("Server says: " + serverMsg);
-
-            dis.close();
-            dos.close();
-            s.close();
-        } catch (Exception e) {
-            System.out.println(e);
+        String host = "localhost";
+        int port = 5000;
+        try (Socket socket = new Socket(host, port)) {
+            System.out.println("TC1: Connected to server at " + host + ":" + port);
+            BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            System.out.print("Enter message to send: ");
+            String message = input.readLine();
+            out.println(message);
+            System.out.println("TC3: Message sent: " + message);
+            String response = in.readLine();
+            System.out.println("TC4: Received from server: " + response);
+        } catch (ConnectException ce) {
+            System.out.println("TC2: Connection refused: Server may not be running.");
+        } catch (IOException e) {
+            System.out.println("Client Error: " + e.getMessage());
         }
 	}
 }
+
+
+package oops;
+import java.io.*;
+import java.net.*;
+public class Client {
+	public static void main(String[] args) {
+        String host = "localhost";
+        int port = 5000;
+        try (Socket socket = new Socket(host, port)) {
+            System.out.println("TC1: Connected to server at " + host + ":" + port);
+            BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            System.out.print("Enter message to send: ");
+            String message = input.readLine();
+            out.println(message);
+            System.out.println("TC3: Message sent: " + message);
+            String response = in.readLine();
+            System.out.println("TC4: Received from server: " + response);
+        } catch (ConnectException ce) {
+            System.out.println("TC2: Connection refused: Server may not be running.");
+        } catch (IOException e) {
+            System.out.println("Client Error: " + e.getMessage());
+        }
+	}
+}
+
