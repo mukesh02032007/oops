@@ -1,103 +1,54 @@
 package oops;
 import java.util.*;
-
-class TreeNode<T>{
-	T data;
-	TreeNode<T> l,r;
-	TreeNode(T v){
-		data=v;
-		l=r=null;
-	}
+class Node<T extends Comparable<T>> {
+    T data;
+    Node<T> left, right;
+    Node(T val) { data = val; }
 }
-class BT<T extends Comparable<T>> {
-    private TreeNode<T> root;
-
-    // Insert method (BST style)
-    public void insert(T value) {
-        root = insertRec(root, value);
+class BST<T extends Comparable<T>> {
+    Node<T> root;
+    void insert(T val) {
+        root = insertRec(root, val);
     }
-
-    private TreeNode<T> insertRec(TreeNode<T> node, T value) {
-        if (node == null) {
-            return new TreeNode<>(value);
-        }
-        if (value.compareTo(node.data) < 0) {
-            node.l = insertRec(node.l, value);
-        } else {
-            node.r = insertRec(node.r, value);
-        }
-        return node;
+    Node<T> insertRec(Node<T> n, T val) {
+        if (n == null) return new Node<>(val);
+        if (val.compareTo(n.data) < 0) n.left = insertRec(n.left, val);
+        else n.right = insertRec(n.right, val);
+        return n;
     }
-
-    // Step 3: DFS Traversals
-    public void inorder() {
-        inOrderRec(root);
-        System.out.println();
+    void inorder(Node<T> n) {
+        if (n != null) { inorder(n.left); System.out.print(n.data + " "); inorder(n.right); }
     }
-
-    private void inOrderRec(TreeNode<T> node) {
-        if (node != null) {
-            inOrderRec(node.l);
-            System.out.print(node.data + " ");
-            inOrderRec(node.r);
-        }
+    void preorder(Node<T> n) {
+        if (n != null) { System.out.print(n.data + " "); preorder(n.left); preorder(n.right); }
     }
-
-    public void preorder() {
-        preorderRec(root);
-        System.out.println();
+    void postorder(Node<T> n) {
+        if (n != null) { postorder(n.left); postorder(n.right); System.out.print(n.data + " "); }
     }
-
-    private void preorderRec(TreeNode<T> node) {
-        if (node != null) {
-            System.out.print(node.data + " ");
-            preorderRec(node.l);
-            preorderRec(node.r);
-        }
-    }
-
-    public void postorder() {
-        postorderRec(root);
-        System.out.println();
-    }
-
-    private void postorderRec(TreeNode<T> node) {
-        if (node != null) {
-            postorderRec(node.l);
-            postorderRec(node.r);
-            System.out.print(node.data + " ");
-        }
-    }
-    public void levelorder() {
+    void levelorder() {
         if (root == null) return;
-
-        Queue<TreeNode<T>> queue = new LinkedList<>();
-        queue.add(root);
-
-        while (!queue.isEmpty()) {
-            TreeNode<T> node = queue.poll();
-            System.out.print(node.data + " ");
-
-            if (node.l != null) queue.add(node.l);
-            if (node.r != null) queue.add(node.r);
+        Queue<Node<T>> q = new LinkedList<>();
+        q.add(root);
+        while (!q.isEmpty()) {
+            Node<T> n = q.poll();
+            System.out.print(n.data + " ");
+            if (n.left != null) q.add(n.left);
+            if (n.right != null) q.add(n.right);
         }
-        System.out.println();
     }
 }
 public class Genericbt {
 	public static void main(String[] args) {
-		BT<Integer> t=new BT<>();
-		t.insert(10);
-		t.insert(5);
-		t.insert(20);
-		System.out.println("TC1:(10,5,20) inserted");
-		System.out.println("TC2:Level Order:");
-		t.levelorder();
-		System.out.println("TC3:In order:");
-		t.inorder();
-		System.out.println("TC4:Pre order");
-		t.preorder();
-		System.out.println("TC5:Post order");
-		t.postorder();
+        BST<Integer> t = new BST<>();
+        t.insert(10); t.insert(5); t.insert(20);
+        System.out.println("TC1: (10,5,20) inserted");
+        System.out.print("TC2: Level Order:");
+        t.levelorder();
+        System.out.print("\nTC3: In Order:");
+        t.inorder(t.root);
+        System.out.print("\nTC4: Pre Order:");
+        t.preorder(t.root); 
+        System.out.print("\nTC5: Post Order:");
+        t.postorder(t.root);
 	}
 }
