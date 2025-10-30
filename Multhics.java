@@ -7,17 +7,19 @@ interface MyService extends Remote {
 }
 class MyServer extends UnicastRemoteObject implements MyService {
     MyServer() throws RemoteException { super(); }
+
     public String sayHello(String name) throws RemoteException {
-        System.out.println("Request from: " + name + " | Thread: " + Thread.currentThread().getName());
+        System.out.println("[TC2/TC3] Request received from: " + name +
+                           " | Handled by Thread: " + Thread.currentThread().getName());
         return "Hello, " + name + "!";
     }
     public static void startServer() {
         try {
             LocateRegistry.createRegistry(1099);
             Naming.rebind("rmi://localhost:1099/Service", new MyServer());
-            System.out.println("Server started successfully.\n");
+            System.out.println("=== TC1: Server started successfully ===\n");
         } catch (Exception e) {
-            System.out.println("Server error: " + e);
+            System.out.println("Server Error: " + e);
         }
     }
 }
@@ -30,23 +32,25 @@ public class Multhics{
             new Thread(() -> {
                 try {
                     MyService stub = (MyService) Naming.lookup("rmi://localhost:1099/Service");
-                    System.out.println(stub.sayHello("Client " + id));
+                    String response = stub.sayHello("Client " + id);
+                    System.out.println("[TC2/TC3] Response: " + response);
                 } catch (Exception e) {
-                    System.out.println("Client " + id + " error: " + e);
+                    System.out.println("[TC2/TC3] Client " + id + " Error: " + e);
                 }
             }).start();
         }
         try {
-            MyService stub = (MyService) Naming.lookup("rmi://localhost:1099/WrongService");
-            System.out.println(stub.sayHello("FakeClient"));
+            MyService wrongStub = (MyService) Naming.lookup("rmi://localhost:1099/WrongService");
+            System.out.println(wrongStub.sayHello("FakeClient"));
         } catch (Exception e) {
-            System.out.println("\nTC4 - Server not found: " + e.getClass().getSimpleName());
+            System.out.println("\n=== TC4: Server not found or wrong lookup ===");
+            System.out.println("Error: " + e.getClass().getSimpleName() + "\n");
         }
         try {
             throw new RemoteException("Invalid method call simulated");
         } catch (Exception e) {
-            System.out.println("TC5 - Invalid call: " + e.getMessage());
+            System.out.println("=== TC5: Invalid method call handled ===");
+            System.out.println("Error Message: " + e.getMessage());
         }
     }
 }
-
